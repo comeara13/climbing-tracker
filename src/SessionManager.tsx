@@ -1,17 +1,17 @@
 import './App.css'
 import type { BoulderGrade } from './App'
 import React, { useState, useReducer } from 'react'
-import { Container, IconButton } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
 import BoulderTrack from './BoulderTrack'
+import { Button, ButtonGroup, Box } from '@mui/material'
+import ActiveSubView from './ActiveSubView'
 
-type gradeInfo = {
+type GradeInfo = {
   grade: BoulderGrade
   count: number
 }
 
 type ActiveSubSession = {
-  gradeInfos: gradeInfo[]
+  gradeInfos: GradeInfo[]
   startTime: Date
   endTime?: Date
 }
@@ -41,6 +41,10 @@ enum SessionActionKind {
 type reducerAction = {
   type: SessionActionKind
   payload?: ClimbingSubSession
+}
+
+type SessionManagerProps = {
+  maxGrade: BoulderGrade
 }
 
 function reducer(
@@ -77,11 +81,24 @@ function reducer(
 }
 // UI / controls
 // state -> make a reducer for climbing session
-function SessionManager() {
+function SessionManager({ maxGrade }: SessionManagerProps) {
   const [state, dispatch] = useReducer(reducer, {
     startTime: new Date(),
     subSessions: [],
   })
-  return <div className="SessionManager"></div>
+  let append = (subSession: ClimbingSubSession) =>
+    dispatch({ type: SessionActionKind.APPEND, payload: subSession })
+  let content = state.endTime ? (
+    'summary view'
+  ) : (
+    <ActiveSubView maxGrade={maxGrade} append={append} />
+  )
+  return <div className="SessionManager">{content}</div>
 }
 export default SessionManager
+export type {
+  ClimbingSubSession,
+  InactiveSubSession,
+  ActiveSubSession,
+  GradeInfo,
+}

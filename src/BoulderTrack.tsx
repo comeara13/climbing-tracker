@@ -6,10 +6,11 @@ import { Button, ButtonGroup, Box } from '@mui/material'
 
 type BoulderTrackProps = {
   grade: BoulderGrade
+  count: number
+  setCount: (a: number) => void
 }
 
-function BoulderTrack({ grade }: BoulderTrackProps) {
-  const [count, setCount] = useState(0)
+function BoulderTrack({ grade, count, setCount }: BoulderTrackProps) {
   return (
     <div className="BoulderGrade">
       <Box display="flex" justifyContent="space-evenly">

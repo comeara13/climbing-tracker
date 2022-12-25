@@ -2,7 +2,7 @@ import './App.css'
 import React, { useState } from 'react'
 import { Container, IconButton } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import Current from './Current'
+import SessionManager from './SessionManager'
 
 enum Flow {
   'INITIAL',
@@ -17,7 +17,7 @@ function App() {
   const initialContent = (
     <IconButton onClick={() => setFlow(Flow.CURRENT)}>Add New</IconButton>
   )
-  const currentContent = <Current maxGrade={maxGrade} />
+  const currentContent = <SessionManager maxGrade={maxGrade} />
 
   function getContent(flowState: Flow): JSX.Element {
     if (flowState === Flow.CURRENT) {
