@@ -7,7 +7,7 @@ import { Button, ButtonGroup, Box } from '@mui/material'
 type BoulderTrackProps = {
   grade: BoulderGrade
   count: number
-  setCount: (a: number) => void
+  setCount: (count: number) => void
 }
 
 function BoulderTrack({ grade, count, setCount }: BoulderTrackProps) {
