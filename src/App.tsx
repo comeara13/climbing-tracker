@@ -5,25 +5,7 @@ import AddIcon from '@mui/icons-material/Add'
 import Current from './Current'
 
 type Flow = 'INITIAL' | 'CURRENT'
-type BoulderGrade =
-  | -1
-  | 0
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 10
-  | 11
-  | 12
-  | 13
-  | 14
-  | 15
-  | 16
+type BoulderGrade = number
 
 function App() {
   const [flow, setFlow] = useState<Flow>('INITIAL')
@@ -32,7 +14,7 @@ function App() {
   const initialContent = (
     <IconButton onClick={() => setFlow('CURRENT')}>Add New</IconButton>
   )
-  const currentContent = <Current />
+  const currentContent = <Current maxGrade={maxGrade} />
 
   function getContent(flowState: Flow): JSX.Element {
     if (flowState === 'CURRENT') {

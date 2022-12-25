@@ -1,4 +1,5 @@
 import './App.css'
+import type { BoulderGrade } from './App'
 import React, { useState } from 'react'
 import { Container, getTextFieldUtilityClass, IconButton } from '@mui/material'
 import { Button, ButtonGroup, Box } from '@mui/material'
