@@ -13,6 +13,8 @@ import BoulderTrack from './BoulderTrack'
 import { Button, ButtonGroup, Box } from '@mui/material'
 import { useReducer } from 'react'
 
+// todo - all this state needs to move up 1 level to the mgr, this should be mostly logicless by the end of that
+
 type CurrentProps = {
   maxGrade: BoulderGrade
   append: (session: ClimbingSubSession) => void
@@ -86,9 +88,12 @@ function ActiveSubView({ maxGrade, append }: CurrentProps) {
     copy.gradeInfos = makeGradeInfos(maxGrade)
     return copy
   })
+  let cs: ClimbingSubSession = {
+    active: activeState,
+    inactive: { startTime: new Date() },
+  }
   return (
     <div className="Current">
-      {maxGrade}{' '}
       {makeTrackers(
         activeState.gradeInfos,
         (grade: number) => (newCount: number) =>
@@ -97,7 +102,10 @@ function ActiveSubView({ maxGrade, append }: CurrentProps) {
             payload: [grade, newCount],
           })
       )}
-      ,
+      <ButtonGroup orientation="vertical">
+        <Button onClick={() => append(cs)}> Finish Set</Button>
+        <Button onClick={() => append(cs)}> End Session</Button>
+      </ButtonGroup>
     </div>
   )
 }
