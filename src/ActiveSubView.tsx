@@ -15,9 +15,9 @@ import { useReducer } from 'react'
 
 // todo - all this state needs to move up 1 level to the mgr, this should be mostly logicless by the end of that
 
-type CurrentProps = {
+type ActiveSubViewProps = {
   maxGrade: BoulderGrade
-  append: (session: ClimbingSubSession) => void
+  append: (session: ActiveSubSession) => void
 }
 
 const newActiveSubSession: ActiveSubSession = {
@@ -82,7 +82,7 @@ function reducer(
   }
 }
 
-function ActiveSubView({ maxGrade, append }: CurrentProps) {
+function ActiveSubView({ maxGrade, append }: ActiveSubViewProps) {
   let [activeState, dispatch] = useReducer(reducer, maxGrade, (maxGrade) => {
     let copy = { ...newActiveSubSession }
     copy.gradeInfos = makeGradeInfos(maxGrade)
@@ -103,8 +103,8 @@ function ActiveSubView({ maxGrade, append }: CurrentProps) {
           })
       )}
       <ButtonGroup orientation="vertical">
-        <Button onClick={() => append(cs)}> Finish Set</Button>
-        <Button onClick={() => append(cs)}> End Session</Button>
+        <Button onClick={() => append(activeState)}> Finish Set</Button>
+        <Button onClick={() => append(activeState)}> End Session</Button>
       </ButtonGroup>
     </div>
   )

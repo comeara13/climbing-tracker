@@ -4,6 +4,7 @@ import React, { useState, useReducer } from 'react'
 import BoulderTrack from './BoulderTrack'
 import { Button, ButtonGroup, Box } from '@mui/material'
 import ActiveSubView from './ActiveSubView'
+import SubSessionManager from './SubSessionManager'
 
 type GradeInfo = {
   grade: BoulderGrade
@@ -91,7 +92,7 @@ function SessionManager({ maxGrade }: SessionManagerProps) {
   let content = state.endTime ? (
     'summary view'
   ) : (
-    <ActiveSubView maxGrade={maxGrade} append={append} />
+    <SubSessionManager maxGrade={maxGrade} append={append} />
   )
   return <div className="SessionManager">{content}</div>
 }
