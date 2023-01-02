@@ -6,12 +6,9 @@ import type {
   ActiveSubSession,
   GradeInfo,
 } from './SessionManager'
-import React, { useState } from 'react'
-import { Container, IconButton } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
 import BoulderTrack from './BoulderTrack'
-import { Button, ButtonGroup, Box } from '@mui/material'
 import { useReducer } from 'react'
+import TransitionButtons from './TransitionButtons'
 
 // todo - all this state needs to move up 1 level to the mgr, this should be mostly logicless by the end of that
 
@@ -102,10 +99,10 @@ function ActiveSubView({ maxGrade, append }: ActiveSubViewProps) {
             payload: [grade, newCount],
           })
       )}
-      <ButtonGroup orientation="vertical">
-        <Button onClick={() => append(activeState)}> Finish Set</Button>
-        <Button onClick={() => append(activeState)}> End Session</Button>
-      </ButtonGroup>
+      <TransitionButtons
+        handleNextClick={() => append(activeState)}
+        handleEndClick={() => append(activeState)}
+      />
     </div>
   )
 }
