@@ -22,10 +22,7 @@ type InactiveSubSession = {
   endTime?: Date
 }
 
-type ClimbingSubSession = {
-  active: ActiveSubSession
-  inactive: InactiveSubSession
-}
+type ClimbingSubSession = ActiveSubSession | InactiveSubSession
 
 type ClimbingSession = {
   startTime: Date

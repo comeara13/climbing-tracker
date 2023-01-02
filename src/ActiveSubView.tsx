@@ -85,10 +85,6 @@ function ActiveSubView({ maxGrade, append }: ActiveSubViewProps) {
     copy.gradeInfos = makeGradeInfos(maxGrade)
     return copy
   })
-  let cs: ClimbingSubSession = {
-    active: activeState,
-    inactive: { startTime: new Date() },
-  }
   return (
     <div className="Current">
       {makeTrackers(

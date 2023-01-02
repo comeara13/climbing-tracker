@@ -17,43 +17,6 @@ type SubSessionManagerProps = {
   append: (session: ClimbingSubSession) => void
 }
 
-enum reducerActionKind {
-  'APPEND_ACTIVE',
-  'APPEND_INACTIVE',
-}
-
-type reducerAction = {
-  type: reducerActionKind
-  payload?: {
-    active?: ActiveSubSession
-    inactive?: InactiveSubSession
-  }
-}
-function reducer(
-  state: ClimbingSubSession,
-  action: reducerAction
-): ClimbingSubSession {
-  const { type, payload } = action
-  switch (type) {
-    case reducerActionKind.APPEND_ACTIVE: {
-      if (payload && payload.active) {
-        return { ...state, active: payload.active }
-      } else {
-        return state
-      }
-    }
-    case reducerActionKind.APPEND_INACTIVE: {
-      if (payload && payload.inactive) {
-        return { ...state, inactive: payload.inactive }
-      } else {
-        return state
-      }
-    }
-    default:
-      return state
-  }
-}
-
 enum displayTypes {
   'Active',
   'Inactive',
@@ -63,14 +26,28 @@ function SubSessionManager({ maxGrade, append }: SubSessionManagerProps) {
   let [displayType, setDisplayType] = useState<displayTypes>(
     displayTypes.Inactive
   )
-  let [activeSession, setActiveSession] = useState<ActiveSubSession | null>()
-  let [inactiveSession, setInactiveSession] =
-    useState<InactiveSubSession | null>()
+  function handleActiveTransition(subSession: ActiveSubSession) {
+    append(subSession)
+    setDisplayType(displayTypes.Inactive)
+  }
+  function handleInActiveTransition(subSession: InactiveSubSession) {
+    append(subSession)
+    setDisplayType(displayTypes.Active)
+  }
+
   let getContent = () => {
     if (displayType === displayTypes.Active) {
-      return <ActiveSubView maxGrade={maxGrade} append={setActiveSession} />
+      return (
+        <ActiveSubView maxGrade={maxGrade} append={handleActiveTransition} />
+      )
     }
-    return <InactiveSubView timerSeconds={100} subsessionId={10} />
+    return (
+      <InactiveSubView
+        timerSeconds={100}
+        subsessionId={10}
+        append={handleInActiveTransition}
+      />
+    )
   }
   let content = getContent()
   return <>{content}</>
