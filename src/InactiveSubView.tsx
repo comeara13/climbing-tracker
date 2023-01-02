@@ -16,6 +16,7 @@ type InactiveSubViewProps = {
   timerSeconds: number
   subsessionId: number
   append: (session: InactiveSubSession) => void
+  end: (session: InactiveSubSession) => void
 }
 
 function secondsToTime(e: number) {
@@ -58,6 +59,7 @@ function InactiveSubView({
   timerSeconds,
   subsessionId,
   append,
+  end,
 }: InactiveSubViewProps) {
   const [startTime, setStartTime] = useState(new Date())
   const [elapsedSeconds, setElapsedSeconds] = useState(0)

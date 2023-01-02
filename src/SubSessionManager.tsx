@@ -15,6 +15,7 @@ import InactiveSubView from './InactiveSubView'
 type SubSessionManagerProps = {
   maxGrade: BoulderGrade
   append: (session: ClimbingSubSession) => void
+  end: (session: ClimbingSubSession) => void
 }
 
 enum displayTypes {
@@ -22,30 +23,32 @@ enum displayTypes {
   'Inactive',
 }
 
-function SubSessionManager({ maxGrade, append }: SubSessionManagerProps) {
+function SubSessionManager({ maxGrade, append, end }: SubSessionManagerProps) {
   let [displayType, setDisplayType] = useState<displayTypes>(
     displayTypes.Inactive
   )
-  function handleActiveTransition(subSession: ActiveSubSession) {
+
+  function handleAppend(subSession: ClimbingSubSession) {
     append(subSession)
-    setDisplayType(displayTypes.Inactive)
-  }
-  function handleInActiveTransition(subSession: InactiveSubSession) {
-    append(subSession)
-    setDisplayType(displayTypes.Active)
+    if (displayType == displayTypes.Active) {
+      setDisplayType(displayTypes.Inactive)
+    } else {
+      setDisplayType(displayTypes.Active)
+    }
   }
 
   let getContent = () => {
     if (displayType === displayTypes.Active) {
       return (
-        <ActiveSubView maxGrade={maxGrade} append={handleActiveTransition} />
+        <ActiveSubView maxGrade={maxGrade} append={handleAppend} end={end} />
       )
     }
     return (
       <InactiveSubView
         timerSeconds={100}
         subsessionId={10}
-        append={handleInActiveTransition}
+        append={handleAppend}
+        end={end}
       />
     )
   }

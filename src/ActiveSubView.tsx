@@ -15,6 +15,7 @@ import TransitionButtons from './TransitionButtons'
 type ActiveSubViewProps = {
   maxGrade: BoulderGrade
   append: (session: ActiveSubSession) => void
+  end: (session: ActiveSubSession) => void
 }
 
 const newActiveSubSession: ActiveSubSession = {
@@ -37,6 +38,7 @@ function makeTrackers(
   return gradeInfos.map((info) => (
     <BoulderTrack
       grade={info.grade}
+      key={info.grade}
       count={info.count}
       setCount={updateCount(info.grade)}
     />
@@ -79,7 +81,7 @@ function reducer(
   }
 }
 
-function ActiveSubView({ maxGrade, append }: ActiveSubViewProps) {
+function ActiveSubView({ maxGrade, append, end }: ActiveSubViewProps) {
   let [activeState, dispatch] = useReducer(reducer, maxGrade, (maxGrade) => {
     let copy = { ...newActiveSubSession }
     copy.gradeInfos = makeGradeInfos(maxGrade)
@@ -97,7 +99,7 @@ function ActiveSubView({ maxGrade, append }: ActiveSubViewProps) {
       )}
       <TransitionButtons
         handleNextClick={() => append(activeState)}
-        handleEndClick={() => append(activeState)}
+        handleEndClick={() => end(activeState)}
       />
     </div>
   )

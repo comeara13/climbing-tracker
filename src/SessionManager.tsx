@@ -61,13 +61,20 @@ function reducer(
         }
       }
       return state
-
     case SessionActionKind.END:
+      if (payload) {
+        let newArray = [...state.subSessions]
+        newArray.push(payload)
+        return {
+          ...state,
+          subSessions: newArray,
+          endTime: new Date(),
+        }
+      }
       return {
         ...state,
         endTime: new Date(),
       }
-
     case SessionActionKind.START:
       return {
         startTime: new Date(),
@@ -86,10 +93,12 @@ function SessionManager({ maxGrade }: SessionManagerProps) {
   })
   let append = (subSession: ClimbingSubSession) =>
     dispatch({ type: SessionActionKind.APPEND, payload: subSession })
+  let end = (subSession: ClimbingSubSession) =>
+    dispatch({ type: SessionActionKind.END, payload: subSession })
   let content = state.endTime ? (
-    'summary view'
+    <> {JSON.stringify(state)} </>
   ) : (
-    <SubSessionManager maxGrade={maxGrade} append={append} />
+    <SubSessionManager maxGrade={maxGrade} append={append} end={end} />
   )
   return <div className="SessionManager">{content}</div>
 }
