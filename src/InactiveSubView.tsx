@@ -10,6 +10,42 @@ type InactiveSubViewProps = {
   subsessionId: number
 }
 
+function secondsToTime(e: number) {
+  const m = Math.floor((e % 3600) / 60)
+      .toString()
+      .padStart(2, '0'),
+    s = Math.floor(e % 60)
+      .toString()
+      .padStart(2, '0')
+  return `${m}:${s}`
+}
+
+function buildTimerStats(
+  timerSeconds: number,
+  percentageElapsed: number,
+  elapsedSeconds: number
+) {
+  const overageSeconds = Math.max(Math.floor(elapsedSeconds) - timerSeconds, 0)
+  return (
+    <List>
+      <ListItem>
+        <ListItemText primary={`Target Time: ${secondsToTime(timerSeconds)}`} />
+      </ListItem>
+      <ListItem>
+        <ListItemText
+          primary={`Target %: ${Math.min(Math.floor(percentageElapsed), 100)}`}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={`Elapsed: ${secondsToTime(elapsedSeconds)}`} />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={`Overage: ${secondsToTime(overageSeconds)}`} />
+      </ListItem>
+    </List>
+  )
+}
+
 function InactiveSubView({ timerSeconds, subsessionId }: InactiveSubViewProps) {
   const [startTime, setStartTime] = useState(new Date())
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
@@ -30,30 +66,7 @@ function InactiveSubView({ timerSeconds, subsessionId }: InactiveSubViewProps) {
         value={Math.min(percentageElapsed, 100)}
         color={percentageElapsed > 100 ? 'secondary' : 'primary'}
       />
-      <List>
-        <ListItem>
-          <ListItemText primary={`Target Time: ${timerSeconds}`} />
-        </ListItem>
-        <ListItem>
-          <ListItemText
-            primary={`Target %: ${Math.min(
-              Math.floor(percentageElapsed),
-              100
-            )}`}
-          />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={`Elapsed: ${Math.floor(elapsedSeconds)}`} />
-        </ListItem>
-        <ListItem>
-          <ListItemText
-            primary={`Overage: ${Math.max(
-              Math.floor(elapsedSeconds) - timerSeconds,
-              0
-            )}`}
-          />
-        </ListItem>
-      </List>
+      {buildTimerStats(timerSeconds, percentageElapsed, elapsedSeconds)}
     </div>
   )
 }
