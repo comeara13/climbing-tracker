@@ -83,11 +83,13 @@ function reducer(
 }
 
 function filterActiveSubSession(input: ActiveSubSession) {
-  let newInfos = input.gradeInfos.filter((value) => value.count > 0)
+  /* let newInfos = input.gradeInfos.filter((value) => value.count > 0)
   return {
     ...input,
     gradeInfos: newInfos,
-  }
+  } */
+  // don't filter anymore
+  return input
 }
 
 function ActiveSubView({ maxGrade, append, end }: ActiveSubViewProps) {

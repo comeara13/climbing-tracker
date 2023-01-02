@@ -13,6 +13,7 @@ import {
 } from '@mui/material'
 import ActiveSubView from './ActiveSubView'
 import SubSessionManager from './SubSessionManager'
+import SessionSummaryView from './SessionSummaryView'
 
 type GradeInfo = {
   grade: BoulderGrade
@@ -170,7 +171,7 @@ function SessionManager({}: SessionManagerProps) {
           />
         )
       case SessionStage.FINISHED:
-        return <> {JSON.stringify(state)} </>
+        return <SessionSummaryView maxGrade={maxGrade} session={state} />
 
       case SessionStage.INITIAL:
         return (
