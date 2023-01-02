@@ -61,7 +61,7 @@ enum displayTypes {
 
 function SubSessionManager({ maxGrade, append }: SubSessionManagerProps) {
   let [displayType, setDisplayType] = useState<displayTypes>(
-    displayTypes.Active
+    displayTypes.Inactive
   )
   let [activeSession, setActiveSession] = useState<ActiveSubSession | null>()
   let [inactiveSession, setInactiveSession] =
@@ -70,7 +70,7 @@ function SubSessionManager({ maxGrade, append }: SubSessionManagerProps) {
     if (displayType === displayTypes.Active) {
       return <ActiveSubView maxGrade={maxGrade} append={setActiveSession} />
     }
-    return <InactiveSubView />
+    return <InactiveSubView timerSeconds={100} subsessionId={10} />
   }
   let content = getContent()
   return <>{content}</>
