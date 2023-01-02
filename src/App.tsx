@@ -1,8 +1,9 @@
 import './App.css'
 import React, { useState } from 'react'
-import { Container, IconButton } from '@mui/material'
+import { Container, IconButton, Box } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import SessionManager from './SessionManager'
+import SubSessionManager from './SubSessionManager'
 
 enum Flow {
   'INITIAL',
@@ -11,13 +12,13 @@ enum Flow {
 type BoulderGrade = number
 
 function App() {
-  const [flow, setFlow] = useState<Flow>(Flow.INITIAL)
+  const [flow, setFlow] = useState<Flow>(Flow.CURRENT)
   const [maxGrade, setMaxGrade] = useState<BoulderGrade>(16)
 
   const initialContent = (
     <IconButton onClick={() => setFlow(Flow.CURRENT)}>Add New</IconButton>
   )
-  const currentContent = <SessionManager maxGrade={maxGrade} />
+  const currentContent = <SessionManager />
 
   function getContent(flowState: Flow): JSX.Element {
     if (flowState === Flow.CURRENT) {
@@ -30,9 +31,15 @@ function App() {
   }
 
   const content = getContent(flow)
+  const header = <>Profile, Past Climbs, About</>
   return (
     <div className="App">
-      <Container>{content}</Container>
+      <Container>
+        <Box>{header}</Box>
+        <Box>
+          <SessionManager />
+        </Box>
+      </Container>
     </div>
   )
 }

@@ -2,7 +2,15 @@ import './App.css'
 import type { BoulderGrade } from './App'
 import React, { useState, useReducer } from 'react'
 import BoulderTrack from './BoulderTrack'
-import { TextField } from '@mui/material'
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+  Stack,
+} from '@mui/material'
 import ActiveSubView from './ActiveSubView'
 import SubSessionManager from './SubSessionManager'
 
@@ -41,9 +49,7 @@ type reducerAction = {
   payload?: ClimbingSubSession
 }
 
-type SessionManagerProps = {
-  maxGrade: BoulderGrade
-}
+type SessionManagerProps = {}
 
 function reducer(
   state: ClimbingSession,
@@ -84,47 +90,102 @@ function reducer(
       return state
   }
 }
+enum SessionStage {
+  INITIAL,
+  ACTIVE,
+  FINISHED,
+}
 
 const DEFAULT_REST = 60 * 5
 // UI / controls
 // state -> make a reducer for climbing session
-function SessionManager({ maxGrade }: SessionManagerProps) {
+function SessionManager({}: SessionManagerProps) {
   const [targetInactiveTime, setTargetInactiveTime] = useState(100)
+  const [maxGrade, setMaxGrade] = useState(16)
   const [state, dispatch] = useReducer(reducer, {
     startTime: new Date(),
     subSessions: [],
   })
+  const [sessionStage, setSessionStage] = useState(SessionStage.INITIAL)
   let append = (subSession: ClimbingSubSession) =>
     dispatch({ type: SessionActionKind.APPEND, payload: subSession })
-  let end = (subSession: ClimbingSubSession) =>
+  let end = (subSession: ClimbingSubSession) => {
     dispatch({ type: SessionActionKind.END, payload: subSession })
-  let content = state.endTime ? (
-    <> {JSON.stringify(state)} </>
-  ) : (
-    <SubSessionManager
-      maxGrade={maxGrade}
-      append={append}
-      end={end}
-      targetInactiveTime={targetInactiveTime}
-    />
+    setSessionStage(SessionStage.FINISHED)
+  }
+  let sessionParmControls = (
+    <FormControl fullWidth>
+      <Stack spacing={2}>
+        <InputLabel id="max-boulder-grade">Max Grade</InputLabel>
+        <Select
+          labelId="max-bouler-grade-label"
+          id="max-boulder-grade-select"
+          value={maxGrade}
+          label="Max. Grade"
+          onChange={(e) => {
+            setMaxGrade(e.target.value as BoulderGrade)
+          }}
+        >
+          <MenuItem value={-1}>VB</MenuItem>
+          <MenuItem value={0}>V0</MenuItem>
+          <MenuItem value={1}>V1</MenuItem>
+          <MenuItem value={2}>V2</MenuItem>
+          <MenuItem value={3}>V3</MenuItem>
+          <MenuItem value={4}>V4</MenuItem>
+          <MenuItem value={5}>V5</MenuItem>
+          <MenuItem value={6}>V6</MenuItem>
+          <MenuItem value={7}>V7</MenuItem>
+          <MenuItem value={8}>V8</MenuItem>
+          <MenuItem value={9}>V9</MenuItem>
+          <MenuItem value={10}>V10</MenuItem>
+          <MenuItem value={11}>V11</MenuItem>
+          <MenuItem value={12}>V12</MenuItem>
+        </Select>
+        <TextField
+          id="outlined-number"
+          label="Rest Seconds"
+          type="number"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          value={targetInactiveTime}
+          onChange={(e) => {
+            let asNumber =
+              e.target.type === 'number' ? +e.target.value : DEFAULT_REST
+            setTargetInactiveTime(asNumber)
+          }}
+        />
+      </Stack>
+    </FormControl>
   )
+  function getContent(stage: SessionStage) {
+    switch (stage) {
+      case SessionStage.ACTIVE:
+        return (
+          <SubSessionManager
+            maxGrade={maxGrade}
+            append={append}
+            end={end}
+            targetInactiveTime={targetInactiveTime}
+          />
+        )
+      case SessionStage.FINISHED:
+        return <> {JSON.stringify(state)} </>
+
+      case SessionStage.INITIAL:
+        return (
+          <Button onClick={() => setSessionStage(SessionStage.ACTIVE)}>
+            Start
+          </Button>
+        )
+    }
+  }
   return (
     <div className="SessionManager">
-      <TextField
-        id="outlined-number"
-        label="Rest Seconds"
-        type="number"
-        InputLabelProps={{
-          shrink: true,
-        }}
-        value={targetInactiveTime}
-        onChange={(e) => {
-          let asNumber =
-            e.target.type === 'number' ? +e.target.value : DEFAULT_REST
-          setTargetInactiveTime(asNumber)
-        }}
-      />
-      {content}
+      <Stack spacing={2}>
+        {sessionParmControls}
+        {getContent(sessionStage)}
+      </Stack>
     </div>
   )
 }
@@ -134,4 +195,5 @@ export type {
   InactiveSubSession,
   ActiveSubSession,
   GradeInfo,
+  ClimbingSession,
 }
