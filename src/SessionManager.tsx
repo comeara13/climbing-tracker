@@ -84,6 +84,8 @@ function reducer(
       return state
   }
 }
+
+const DEFAULT_REST = 60 * 5
 // UI / controls
 // state -> make a reducer for climbing session
 function SessionManager({ maxGrade }: SessionManagerProps) {
@@ -116,7 +118,11 @@ function SessionManager({ maxGrade }: SessionManagerProps) {
           shrink: true,
         }}
         value={targetInactiveTime}
-        onChange={(e) => setTargetInactiveTime(e.target.value)}
+        onChange={(e) => {
+          let asNumber =
+            e.target.type === 'number' ? +e.target.value : DEFAULT_REST
+          setTargetInactiveTime(asNumber)
+        }}
       />
       {content}
     </div>
