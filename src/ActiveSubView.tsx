@@ -9,6 +9,7 @@ import type {
 import BoulderTrack from './BoulderTrack'
 import { useReducer } from 'react'
 import TransitionButtons from './TransitionButtons'
+import { Stack } from '@mui/system'
 
 // todo - all this state needs to move up 1 level to the mgr, this should be mostly logicless by the end of that
 
@@ -97,14 +98,16 @@ function ActiveSubView({ maxGrade, append, end }: ActiveSubViewProps) {
   })
   return (
     <div className="Current">
-      {makeTrackers(
-        activeState.gradeInfos,
-        (grade: number) => (newCount: number) =>
-          dispatch({
-            type: reducerActionKind.INCREMENT,
-            payload: [grade, newCount],
-          })
-      )}
+      <Stack spacing={2}>
+        {makeTrackers(
+          activeState.gradeInfos,
+          (grade: number) => (newCount: number) =>
+            dispatch({
+              type: reducerActionKind.INCREMENT,
+              payload: [grade, newCount],
+            })
+        )}
+      </Stack>
       <TransitionButtons
         handleNextClick={() => append(filterActiveSubSession(activeState))}
         handleEndClick={() => end(filterActiveSubSession(activeState))}
