@@ -83,7 +83,7 @@ function InactiveSubView({
       {buildTimerStats(timerSeconds, percentageElapsed, elapsedSeconds)}
       <TransitionButtons
         handleEndClick={() =>
-          append({
+          end({
             startTime,
             endTime: new Date(),
           })

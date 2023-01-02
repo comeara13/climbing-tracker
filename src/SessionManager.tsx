@@ -2,7 +2,7 @@ import './App.css'
 import type { BoulderGrade } from './App'
 import React, { useState, useReducer } from 'react'
 import BoulderTrack from './BoulderTrack'
-import { Button, ButtonGroup, Box } from '@mui/material'
+import { TextField } from '@mui/material'
 import ActiveSubView from './ActiveSubView'
 import SubSessionManager from './SubSessionManager'
 
@@ -87,6 +87,7 @@ function reducer(
 // UI / controls
 // state -> make a reducer for climbing session
 function SessionManager({ maxGrade }: SessionManagerProps) {
+  const [targetInactiveTime, setTargetInactiveTime] = useState(100)
   const [state, dispatch] = useReducer(reducer, {
     startTime: new Date(),
     subSessions: [],
@@ -98,9 +99,28 @@ function SessionManager({ maxGrade }: SessionManagerProps) {
   let content = state.endTime ? (
     <> {JSON.stringify(state)} </>
   ) : (
-    <SubSessionManager maxGrade={maxGrade} append={append} end={end} />
+    <SubSessionManager
+      maxGrade={maxGrade}
+      append={append}
+      end={end}
+      targetInactiveTime={targetInactiveTime}
+    />
   )
-  return <div className="SessionManager">{content}</div>
+  return (
+    <div className="SessionManager">
+      <TextField
+        id="outlined-number"
+        label="Rest Seconds"
+        type="number"
+        InputLabelProps={{
+          shrink: true,
+        }}
+        value={targetInactiveTime}
+        onChange={(e) => setTargetInactiveTime(e.target.value)}
+      />
+      {content}
+    </div>
+  )
 }
 export default SessionManager
 export type {

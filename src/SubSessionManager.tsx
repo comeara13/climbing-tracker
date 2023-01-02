@@ -1,8 +1,6 @@
 import './App.css'
 import type { BoulderGrade } from './App'
-import React, { useState, useReducer } from 'react'
-import { Container, getTextFieldUtilityClass, IconButton } from '@mui/material'
-import { Button, ButtonGroup, Box } from '@mui/material'
+import React, { useState } from 'react'
 import ActiveSubView from './ActiveSubView'
 import type {
   ClimbingSubSession,
@@ -14,6 +12,7 @@ import InactiveSubView from './InactiveSubView'
 
 type SubSessionManagerProps = {
   maxGrade: BoulderGrade
+  targetInactiveTime: number
   append: (session: ClimbingSubSession) => void
   end: (session: ClimbingSubSession) => void
 }
@@ -23,9 +22,14 @@ enum displayTypes {
   'Inactive',
 }
 
-function SubSessionManager({ maxGrade, append, end }: SubSessionManagerProps) {
+function SubSessionManager({
+  maxGrade,
+  targetInactiveTime,
+  append,
+  end,
+}: SubSessionManagerProps) {
   let [displayType, setDisplayType] = useState<displayTypes>(
-    displayTypes.Inactive
+    displayTypes.Active
   )
 
   function handleAppend(subSession: ClimbingSubSession) {
@@ -45,7 +49,7 @@ function SubSessionManager({ maxGrade, append, end }: SubSessionManagerProps) {
     }
     return (
       <InactiveSubView
-        timerSeconds={100}
+        timerSeconds={targetInactiveTime}
         subsessionId={10}
         append={handleAppend}
         end={end}
