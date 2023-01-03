@@ -16,8 +16,8 @@ function TransitionButtons({
 }: TransitionButtonProps) {
   return (
     <ButtonGroup orientation="vertical">
-      <Button onClick={handleNextClick}> Finish Set</Button>
-      <Button onClick={handleEndClick}> End Session</Button>
+      <Button onClick={handleNextClick}>Next Set</Button>
+      <Button onClick={handleEndClick}>End Session</Button>
     </ButtonGroup>
   )
 }

@@ -102,7 +102,7 @@ const DEFAULT_REST = 60 * 5
 // state -> make a reducer for climbing session
 function SessionManager({}: SessionManagerProps) {
   const [targetInactiveTime, setTargetInactiveTime] = useState(100)
-  const [maxGrade, setMaxGrade] = useState(16)
+  const [maxGrade, setMaxGrade] = useState(-1)
   const [state, dispatch] = useReducer(reducer, {
     startTime: new Date(),
     subSessions: [],
@@ -117,12 +117,11 @@ function SessionManager({}: SessionManagerProps) {
   let sessionParmControls = (
     <FormControl fullWidth>
       <Stack spacing={2}>
-        <InputLabel id="max-boulder-grade">Max Grade</InputLabel>
+        <InputLabel id="max boulder grade select">Max Grade</InputLabel>
         <Select
-          labelId="max-bouler-grade-label"
           id="max-boulder-grade-select"
+          label="Maybe"
           value={maxGrade}
-          label="Max. Grade"
           onChange={(e) => {
             setMaxGrade(e.target.value as BoulderGrade)
           }}
@@ -175,7 +174,12 @@ function SessionManager({}: SessionManagerProps) {
 
       case SessionStage.INITIAL:
         return (
-          <Button onClick={() => setSessionStage(SessionStage.ACTIVE)}>
+          <Button
+            onClick={() => {
+              setSessionStage(SessionStage.ACTIVE)
+              dispatch({ type: SessionActionKind.START })
+            }}
+          >
             Start
           </Button>
         )

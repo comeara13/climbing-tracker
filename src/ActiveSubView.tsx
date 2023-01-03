@@ -95,6 +95,7 @@ function filterActiveSubSession(input: ActiveSubSession) {
 function ActiveSubView({ maxGrade, append, end }: ActiveSubViewProps) {
   let [activeState, dispatch] = useReducer(reducer, maxGrade, (maxGrade) => {
     let copy = { ...newActiveSubSession }
+    copy.startTime = new Date()
     copy.gradeInfos = makeGradeInfos(maxGrade)
     return copy
   })
@@ -111,8 +112,14 @@ function ActiveSubView({ maxGrade, append, end }: ActiveSubViewProps) {
         )}
       </Stack>
       <TransitionButtons
-        handleNextClick={() => append(filterActiveSubSession(activeState))}
-        handleEndClick={() => end(filterActiveSubSession(activeState))}
+        handleNextClick={() =>
+          append(
+            filterActiveSubSession({ ...activeState, endTime: new Date() })
+          )
+        }
+        handleEndClick={() =>
+          end(filterActiveSubSession({ ...activeState, endTime: new Date() }))
+        }
       />
     </div>
   )
