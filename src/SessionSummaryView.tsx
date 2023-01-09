@@ -7,6 +7,7 @@ import type { RouteRecord, ClimbingSession } from './Utils'
 import ClimbSummaryChart from './ClimbSummaryChart'
 import SummaryStatistics from './SummaryStatistics'
 import { getRouteRecords } from './Utils'
+import VPointsOverTime from './VPointsOverTime'
 
 type SessionSummaryViewProps = {
   session: ClimbingSession
@@ -20,7 +21,9 @@ enum summaryDisplayType {
 }
 
 function SessionSummaryView({ session, maxGrade }: SessionSummaryViewProps) {
-  const [displayType, setDisplayType] = useState(summaryDisplayType.TotalClimbs)
+  const [displayType, setDisplayType] = useState(
+    summaryDisplayType.VPointsOverTime
+  )
   let options = (
     <Box display="flex" justifyContent="space-evenly">
       <ButtonGroup>
@@ -65,7 +68,7 @@ function SessionSummaryView({ session, maxGrade }: SessionSummaryViewProps) {
         />
       )}
       {displayType === summaryDisplayType.VPointsOverTime && (
-        <>'points over time"</>
+        <VPointsOverTime session={session} />
       )}
     </Container>
   )

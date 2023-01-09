@@ -22,6 +22,7 @@ export const options = {
       text: 'Chart.js Bar Chart - Stacked',
     },
   },
+  redraw: false,
   responsive: true,
   scales: {
     x: {
@@ -53,10 +54,14 @@ type barChartData = {
 }
 
 // for now assume ordered and all grades up to max
-function buildDataSets(records: ClimbingRecord[], step: number) {
+function buildDataSets(
+  records: ClimbingRecord[],
+  maxGrade: BoulderGrade,
+  step: number
+) {
   // chunk up into sessions
   let bySession = generateSessions(records).map((session) =>
-    countRoutesAtGrade(session, 6)
+    countRoutesAtGrade(session, maxGrade)
   )
   let dataSets = bySession.map((sessionSummaries, index) => {
     let climbArray = sessionSummaries.map((x) => x.count)
@@ -73,7 +78,7 @@ function ClimbSummaryChart({ maxGrade, records }: ClimbSummaryChartProps) {
   const labels = getLabels(maxGrade)
   const data = {
     labels,
-    datasets: buildDataSets(records, 25),
+    datasets: buildDataSets(records, 25, maxGrade),
   }
   return <Bar options={options} data={data} />
 }

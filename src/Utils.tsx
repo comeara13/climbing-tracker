@@ -56,6 +56,14 @@ function groupBy<A>(items: A[], keyGeneratingFunction: (member: A) => string) {
   })
   return returnMap
 }
+const vPointMap = [
+  0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+]
+function getVPoints(summaries: RouteRecord[]): number {
+  return summaries.reduce((prev, summary) => {
+    return prev + vPointMap[summary.grade + 1]
+  }, 0)
+}
 
 function generateSessions(records: ClimbingRecord[]) {
   let returnArray: RouteRecord[][] = []
@@ -130,6 +138,8 @@ export {
   getRouteRecords,
   groupBy,
   countRoutesAtGrade,
+  getVPoints,
+  vPointMap,
 }
 
 export type {

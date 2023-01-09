@@ -61,7 +61,6 @@ function ActiveSubView({
   let [restStartTime, setRestStartTime] = useState(new Date())
   let appendWrapper = (grade: BoulderGrade) => {
     return () => {
-      console.log(`attempt to append ${grade}`)
       append({ grade: grade, endTime: new Date() })
     }
   }

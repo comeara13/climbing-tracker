@@ -7,22 +7,13 @@ import AccordionDetails from '@mui/material/AccordionDetails'
 import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import type { RouteRecord } from './Utils'
-import { secondsToTime, countRoutesAtGrade } from './Utils'
+import { secondsToTime, countRoutesAtGrade, getVPoints } from './Utils'
 
 type SummaryStatisticsProps = {
   totalTime: number
   activeTime: number
   restTime: number
   routeRecords: RouteRecord[]
-}
-
-const vPointMap = [
-  0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-]
-function getVPoints(summaries: RouteRecord[]): number {
-  return summaries.reduce((prev, summary) => {
-    return prev + vPointMap[summary.grade + 1]
-  }, 0)
 }
 
 function SummaryStatistics({
@@ -71,20 +62,6 @@ function SummaryStatistics({
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2a-content"
-          id="panel2a-header"
-        >
-          <Typography sx={{ width: '33%', flexShrink: 0 }}>
-            Total Routes
-          </Typography>
-          <Typography sx={{ color: 'text.secondary' }}>
-            {routeRecords.length}
-          </Typography>
-        </AccordionSummary>
-      </Accordion>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
@@ -93,6 +70,14 @@ function SummaryStatistics({
             {getVPoints(routeRecords)}
           </Typography>
         </AccordionSummary>
+        <AccordionDetails>
+          <Typography sx={{ width: '33%', flexShrink: 0 }}>
+            Total Routes
+          </Typography>
+          <Typography sx={{ color: 'text.secondary' }}>
+            {routeRecords.length}
+          </Typography>
+        </AccordionDetails>
         {routesAtGrade.map((info) => {
           return (
             <AccordionDetails key={info.grade}>
