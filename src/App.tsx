@@ -2,7 +2,7 @@ import './App.css'
 import React, { useState } from 'react'
 import { Container, IconButton, Box } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import SessionManager from './SessionManager'
+import SessionManager from './ActiveSessionComponents/SessionManager'
 
 enum Flow {
   'INITIAL',

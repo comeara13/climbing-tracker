@@ -1,10 +1,10 @@
 import './App.css'
-import type { BoulderGrade } from './App'
+import type { BoulderGrade } from '../App'
 import React, { useState, useEffect, useRef } from 'react'
 import { LinearProgress, List, ListItem } from '@mui/material'
 import { ListItemText } from '@mui/material'
 import TransitionButtons from './TransitionButtons'
-import type { InactiveSubSession } from './Utils'
+import type { InactiveSubSession } from '../Utils'
 import { appendFile } from 'fs'
 
 type RestViewProps = {

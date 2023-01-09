@@ -1,5 +1,5 @@
 import './App.css'
-import type { BoulderGrade } from './App'
+import type { BoulderGrade } from '../App'
 import React, { useState, useEffect, useRef } from 'react'
 import { Container, getTextFieldUtilityClass, IconButton } from '@mui/material'
 import { LinearProgress, List, ListItem } from '@mui/material'

@@ -1,13 +1,13 @@
 import './App.css'
-import type { BoulderGrade } from './App'
+import type { BoulderGrade } from '../App'
 import React, { useState } from 'react'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import type { RouteRecord } from './Utils'
-import { secondsToTime, countRoutesAtGrade, getVPoints } from './Utils'
+import type { RouteRecord } from '../Utils'
+import { secondsToTime, countRoutesAtGrade, getVPoints } from '../Utils'
 
 type SummaryStatisticsProps = {
   totalTime: number

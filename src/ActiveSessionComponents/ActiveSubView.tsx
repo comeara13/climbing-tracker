@@ -5,8 +5,8 @@ import type {
   BoulderGrade,
   ClimbingRecord,
   ClimbingSession,
-} from './Utils'
-import { countRoutesAtGrade, getRouteRecords } from './Utils'
+} from '../Utils'
+import { countRoutesAtGrade, getRouteRecords } from '../Utils'
 import BoulderTrack from './BoulderTrack'
 import { useState } from 'react'
 import TransitionButtons from './TransitionButtons'

@@ -1,6 +1,6 @@
 import './App.css'
 import 'chart.js/auto'
-import type { BoulderGrade } from './App'
+import type { BoulderGrade } from '../App'
 import React, { useState, useEffect, useRef } from 'react'
 import {
   Chart as ChartJS,
@@ -18,8 +18,8 @@ import {
   getRouteRecords,
   vPointMap,
   secondsToTime,
-} from './Utils'
-import type { ClimbingRecord, RouteRecord, InactiveSubSession } from './Utils'
+} from '../Utils'
+import type { ClimbingRecord, RouteRecord, InactiveSubSession } from '../Utils'
 
 type VPointsOverTimeProps = {
   session: ClimbingSession

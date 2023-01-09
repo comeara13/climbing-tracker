@@ -1,8 +1,8 @@
 import './App.css'
-import type { BoulderGrade } from './App'
+import type { BoulderGrade } from '../App'
 import React, { useState, useReducer } from 'react'
 import BoulderTrack from './BoulderTrack'
-import { ClimbingSession, ClimbingRecord, RouteRecord } from './Utils'
+import { ClimbingSession, ClimbingRecord, RouteRecord } from '../Utils'
 import {
   TextField,
   FormControl,
@@ -13,7 +13,7 @@ import {
   Stack,
 } from '@mui/material'
 import ActiveSubView from './ActiveSubView'
-import SessionSummaryView from './SessionSummaryView'
+import SessionSummaryView from '../SummaryComponents/SessionSummaryView'
 
 enum SessionActionKind {
   'START',

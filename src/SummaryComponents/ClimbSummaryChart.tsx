@@ -1,7 +1,7 @@
 import React from 'react'
-import type { BoulderGrade } from './App'
-import type { RouteRecord, ClimbingRecord } from './Utils'
-import { generateSessions, countRoutesAtGrade, getGradeLabel } from './Utils'
+import type { BoulderGrade } from '../App'
+import type { RouteRecord, ClimbingRecord } from '../Utils'
+import { generateSessions, countRoutesAtGrade, getGradeLabel } from '../Utils'
 import {
   Chart as ChartJS,
   CategoryScale,
