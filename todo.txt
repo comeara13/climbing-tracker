@@ -1,0 +1,15 @@
+basic 
+Undo Button
+Prevent max grade down grade
+make a new session
+accordion drop down alignment
+
+
+advanced
+user preferences (grade, rest time)
+save a Session
+view old session
+
+
+v advanced
+pwa (???)
