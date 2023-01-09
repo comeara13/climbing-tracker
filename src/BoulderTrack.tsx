@@ -3,25 +3,23 @@ import type { BoulderGrade } from './App'
 import React, { useState } from 'react'
 import { Container, getTextFieldUtilityClass, IconButton } from '@mui/material'
 import { Button, ButtonGroup, Box } from '@mui/material'
+import { getGradeLabel } from './Utils'
 
 type BoulderTrackProps = {
   grade: BoulderGrade
   count: number
-  setCount: (count: number) => void
+  add: () => void
+  remove: () => void
 }
 
-function BoulderTrack({ grade, count, setCount }: BoulderTrackProps) {
+function BoulderTrack({ grade, count, add, remove }: BoulderTrackProps) {
   const decreaseButton = (
-    <Button
-      variant="outlined"
-      onClick={() => setCount(count - 1)}
-      disabled={count < 1}
-    >
+    <Button variant="outlined" onClick={remove} disabled={count < 1}>
       -
     </Button>
   )
   const increaseButton = (
-    <Button variant="outlined" onClick={() => setCount(count + 1)}>
+    <Button variant="outlined" onClick={add}>
       +
     </Button>
   )
@@ -38,15 +36,6 @@ function BoulderTrack({ grade, count, setCount }: BoulderTrackProps) {
       </Box>
     </div>
   )
-}
-
-function getGradeLabel(grade: BoulderGrade): string {
-  switch (grade) {
-    case -1:
-      return 'VB'
-    default:
-      return `V${grade}`
-  }
 }
 
 export default BoulderTrack

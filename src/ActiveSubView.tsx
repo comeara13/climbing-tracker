@@ -1,126 +1,105 @@
 import './App.css'
-import type { BoulderGrade } from './App'
 import type {
-  ClimbingSubSession,
   InactiveSubSession,
-  ActiveSubSession,
-  GradeInfo,
-} from './SessionManager'
+  RouteRecord,
+  BoulderGrade,
+  ClimbingRecord,
+  ClimbingSession,
+} from './Utils'
+import { countRoutesAtGrade, getRouteRecords } from './Utils'
 import BoulderTrack from './BoulderTrack'
-import { useReducer } from 'react'
+import { useState } from 'react'
 import TransitionButtons from './TransitionButtons'
 import { Stack } from '@mui/system'
-
-// todo - all this state needs to move up 1 level to the mgr, this should be mostly logicless by the end of that
+import RestView from './RestView'
+import { ButtonGroup, Button } from '@mui/material'
 
 type ActiveSubViewProps = {
   maxGrade: BoulderGrade
-  append: (session: ActiveSubSession) => void
-  end: (session: ActiveSubSession) => void
+  append: (record: ClimbingRecord) => void
+  end: () => void
+  restSeconds: number
+  session: ClimbingSession
 }
 
-const newActiveSubSession: ActiveSubSession = {
-  gradeInfos: [],
-  startTime: new Date(),
-}
-
-function makeGradeInfos(maxGrade: BoulderGrade): GradeInfo[] {
-  let array = []
-  for (let i = -1; i <= maxGrade; i++) {
-    array.push({ grade: i, count: 0 })
-  }
-  return array
-}
-
+// todo - the count should not be super fake
 function makeTrackers(
-  gradeInfos: GradeInfo[],
-  updateCount: (grade: number) => (newCount: number) => void
+  maxGrade: BoulderGrade,
+  add: (grade: number) => () => void,
+  remove: (grade: number) => () => void,
+  session: ClimbingSession
 ): JSX.Element[] {
-  return gradeInfos.map((info) => (
-    <BoulderTrack
-      grade={info.grade}
-      key={info.grade}
-      count={info.count}
-      setCount={updateCount(info.grade)}
-    />
-  ))
-}
+  let countAtGrade = countRoutesAtGrade(
+    getRouteRecords(session.records),
+    maxGrade + 2
+  )
 
-enum reducerActionKind {
-  'INCREMENT',
-  'END',
-}
-
-type reducerAction = {
-  type: reducerActionKind
-  payload?: [number, number]
-}
-function reducer(
-  state: ActiveSubSession,
-  action: reducerAction
-): ActiveSubSession {
-  const { type, payload } = action
-  switch (type) {
-    case reducerActionKind.INCREMENT:
-      if (payload) {
-        let newArray = [...state.gradeInfos]
-        newArray[payload[0] + 1].count = payload[1]
-        return {
-          ...state,
-          gradeInfos: newArray,
-        }
-      }
-      return state
-
-    case reducerActionKind.END:
-      return {
-        ...state,
-        endTime: new Date(),
-      }
-    default:
-      return state
+  let trackerArray = []
+  for (let i = -1; i <= maxGrade; i++) {
+    let element = (
+      <BoulderTrack
+        grade={i}
+        key={i}
+        count={countAtGrade[i + 1].count}
+        add={add(i)}
+        remove={remove(i)}
+      />
+    )
+    trackerArray.push(element)
   }
+  return trackerArray
 }
 
-function filterActiveSubSession(input: ActiveSubSession) {
-  /* let newInfos = input.gradeInfos.filter((value) => value.count > 0)
-  return {
-    ...input,
-    gradeInfos: newInfos,
-  } */
-  // don't filter anymore
-  return input
-}
+function ActiveSubView({
+  maxGrade,
+  append,
+  end,
+  restSeconds,
+  session,
+}: ActiveSubViewProps) {
+  let [isRest, setIsRest] = useState(false)
+  let [restStartTime, setRestStartTime] = useState(new Date())
+  let appendWrapper = (grade: BoulderGrade) => {
+    return () => {
+      console.log(`attempt to append ${grade}`)
+      append({ grade: grade, endTime: new Date() })
+    }
+  }
+  let removeWrapper = (grade: BoulderGrade) => {
+    return () => {}
+  }
 
-function ActiveSubView({ maxGrade, append, end }: ActiveSubViewProps) {
-  let [activeState, dispatch] = useReducer(reducer, maxGrade, (maxGrade) => {
-    let copy = { ...newActiveSubSession }
-    copy.startTime = new Date()
-    copy.gradeInfos = makeGradeInfos(maxGrade)
-    return copy
-  })
   return (
     <div className="Current">
       <Stack spacing={2}>
-        {makeTrackers(
-          activeState.gradeInfos,
-          (grade: number) => (newCount: number) =>
-            dispatch({
-              type: reducerActionKind.INCREMENT,
-              payload: [grade, newCount],
-            })
+        {!isRest &&
+          makeTrackers(maxGrade, appendWrapper, removeWrapper, session)}
+        {!isRest && (
+          <Button
+            onClick={() => {
+              setIsRest(true)
+              setRestStartTime(new Date())
+            }}
+          >
+            Take Rest
+          </Button>
         )}
+        {isRest && <RestView append={append} timerSeconds={restSeconds} />}
+        {isRest && (
+          <Button
+            onClick={() => {
+              append({
+                startTime: restStartTime,
+                endTime: new Date(),
+              })
+              setIsRest(false)
+            }}
+          >
+            End Rest
+          </Button>
+        )}
+        <Button onClick={end}>End Session</Button>
       </Stack>
-      <TransitionButtons
-        handleNextClick={() =>
-          append(
-            filterActiveSubSession({ ...activeState, endTime: new Date() })
-          )
-        }
-        handleEndClick={() =>
-          end(filterActiveSubSession({ ...activeState, endTime: new Date() }))
-        }
-      />
     </div>
   )
 }

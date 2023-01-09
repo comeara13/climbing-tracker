@@ -1,48 +1,37 @@
 import './App.css'
 import type { BoulderGrade } from './App'
-import type { GradeInfo } from './SessionManager'
 import React, { useState } from 'react'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import type { RouteRecord } from './Utils'
+import { secondsToTime, countRoutesAtGrade } from './Utils'
 
 type SummaryStatisticsProps = {
   totalTime: number
   activeTime: number
   restTime: number
-  gradeInfo: GradeInfo[]
+  routeRecords: RouteRecord[]
 }
 
 const vPointMap = [
   0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
 ]
-function getVPoints(summaries: GradeInfo[]): number {
+function getVPoints(summaries: RouteRecord[]): number {
   return summaries.reduce((prev, summary) => {
-    return prev + summary.count * vPointMap[summary.grade + 1]
+    return prev + vPointMap[summary.grade + 1]
   }, 0)
-}
-
-function secondsToTime(e: number) {
-  const h = Math.floor(e / 3600)
-      .toString()
-      .padStart(2, '0'),
-    m = Math.floor((e % 3600) / 60)
-      .toString()
-      .padStart(2, '0'),
-    s = Math.floor(e % 60)
-      .toString()
-      .padStart(2, '0')
-  return `${h}:${m}:${s}`
 }
 
 function SummaryStatistics({
   totalTime,
   activeTime,
   restTime,
-  gradeInfo,
+  routeRecords,
 }: SummaryStatisticsProps) {
+  let routesAtGrade = countRoutesAtGrade(routeRecords, 10)
   return (
     <div>
       <Accordion>
@@ -89,9 +78,7 @@ function SummaryStatistics({
             Total Routes
           </Typography>
           <Typography sx={{ color: 'text.secondary' }}>
-            {gradeInfo.reduce((prev, info) => {
-              return prev + info.count
-            }, 0)}
+            {routeRecords.length}
           </Typography>
         </AccordionSummary>
       </Accordion>
@@ -103,10 +90,10 @@ function SummaryStatistics({
         >
           <Typography sx={{ width: '33%', flexShrink: 0 }}>V Points</Typography>
           <Typography sx={{ color: 'text.secondary' }}>
-            {getVPoints(gradeInfo)}
+            {getVPoints(routeRecords)}
           </Typography>
         </AccordionSummary>
-        {gradeInfo.map((info) => {
+        {routesAtGrade.map((info) => {
           return (
             <AccordionDetails key={info.grade}>
               <Typography sx={{ width: '33%', flexShrink: 0 }}>

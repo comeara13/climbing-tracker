@@ -2,6 +2,7 @@ import './App.css'
 import type { BoulderGrade } from './App'
 import React, { useState, useReducer } from 'react'
 import BoulderTrack from './BoulderTrack'
+import { ClimbingSession, ClimbingRecord, RouteRecord } from './Utils'
 import {
   TextField,
   FormControl,
@@ -12,32 +13,7 @@ import {
   Stack,
 } from '@mui/material'
 import ActiveSubView from './ActiveSubView'
-import SubSessionManager from './SubSessionManager'
 import SessionSummaryView from './SessionSummaryView'
-
-type GradeInfo = {
-  grade: BoulderGrade
-  count: number
-}
-
-type ActiveSubSession = {
-  gradeInfos: GradeInfo[]
-  startTime: Date
-  endTime?: Date
-}
-
-type InactiveSubSession = {
-  startTime: Date
-  endTime?: Date
-}
-
-type ClimbingSubSession = ActiveSubSession | InactiveSubSession
-
-type ClimbingSession = {
-  startTime: Date
-  endTime?: Date
-  subSessions: ClimbingSubSession[]
-}
 
 enum SessionActionKind {
   'START',
@@ -47,7 +23,7 @@ enum SessionActionKind {
 
 type reducerAction = {
   type: SessionActionKind
-  payload?: ClimbingSubSession
+  payload?: ClimbingRecord
 }
 
 type SessionManagerProps = {}
@@ -60,21 +36,21 @@ function reducer(
   switch (type) {
     case SessionActionKind.APPEND:
       if (payload) {
-        let newArray = [...state.subSessions]
+        let newArray = [...state.records]
         newArray.push(payload)
         return {
           ...state,
-          subSessions: newArray,
+          records: newArray,
         }
       }
       return state
     case SessionActionKind.END:
       if (payload) {
-        let newArray = [...state.subSessions]
+        let newArray = [...state.records]
         newArray.push(payload)
         return {
           ...state,
-          subSessions: newArray,
+          records: newArray,
           endTime: new Date(),
         }
       }
@@ -85,7 +61,7 @@ function reducer(
     case SessionActionKind.START:
       return {
         startTime: new Date(),
-        subSessions: [],
+        records: [],
       }
     default:
       return state
@@ -94,6 +70,7 @@ function reducer(
 enum SessionStage {
   INITIAL,
   ACTIVE,
+  REST,
   FINISHED,
 }
 
@@ -105,13 +82,13 @@ function SessionManager({}: SessionManagerProps) {
   const [maxGrade, setMaxGrade] = useState(-1)
   const [state, dispatch] = useReducer(reducer, {
     startTime: new Date(),
-    subSessions: [],
+    records: [],
   })
   const [sessionStage, setSessionStage] = useState(SessionStage.INITIAL)
-  let append = (subSession: ClimbingSubSession) =>
-    dispatch({ type: SessionActionKind.APPEND, payload: subSession })
-  let end = (subSession: ClimbingSubSession) => {
-    dispatch({ type: SessionActionKind.END, payload: subSession })
+  let append = (record: ClimbingRecord) =>
+    dispatch({ type: SessionActionKind.APPEND, payload: record })
+  let end = () => {
+    dispatch({ type: SessionActionKind.END })
     setSessionStage(SessionStage.FINISHED)
   }
   let sessionParmControls = (
@@ -162,12 +139,15 @@ function SessionManager({}: SessionManagerProps) {
     switch (stage) {
       case SessionStage.ACTIVE:
         return (
-          <SubSessionManager
-            maxGrade={maxGrade}
-            append={append}
-            end={end}
-            targetInactiveTime={targetInactiveTime}
-          />
+          <>
+            <ActiveSubView
+              maxGrade={maxGrade}
+              append={append}
+              end={end}
+              restSeconds={targetInactiveTime}
+              session={state}
+            />
+          </>
         )
       case SessionStage.FINISHED:
         return <SessionSummaryView maxGrade={maxGrade} session={state} />
@@ -195,10 +175,3 @@ function SessionManager({}: SessionManagerProps) {
   )
 }
 export default SessionManager
-export type {
-  ClimbingSubSession,
-  InactiveSubSession,
-  ActiveSubSession,
-  GradeInfo,
-  ClimbingSession,
-}

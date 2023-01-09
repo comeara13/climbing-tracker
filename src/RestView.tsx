@@ -4,19 +4,12 @@ import React, { useState, useEffect, useRef } from 'react'
 import { LinearProgress, List, ListItem } from '@mui/material'
 import { ListItemText } from '@mui/material'
 import TransitionButtons from './TransitionButtons'
-import type {
-  ClimbingSubSession,
-  InactiveSubSession,
-  ActiveSubSession,
-  GradeInfo,
-} from './SessionManager'
+import type { InactiveSubSession } from './Utils'
 import { appendFile } from 'fs'
 
-type InactiveSubViewProps = {
+type RestViewProps = {
   timerSeconds: number
-  subsessionId: number
   append: (session: InactiveSubSession) => void
-  end: (session: InactiveSubSession) => void
 }
 
 function secondsToTime(e: number) {
@@ -55,12 +48,7 @@ function buildTimerStats(
   )
 }
 
-function InactiveSubView({
-  timerSeconds,
-  subsessionId,
-  append,
-  end,
-}: InactiveSubViewProps) {
+function RestView({ timerSeconds, append }: RestViewProps) {
   const [startTime, setStartTime] = useState(new Date())
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   useEffect(() => {
@@ -71,7 +59,7 @@ function InactiveSubView({
     return () => {
       clearInterval(intervalId)
     }
-  }, [subsessionId])
+  }, [])
   let percentageElapsed = (elapsedSeconds * 100) / timerSeconds
   return (
     <div className="BoulderGrade">
@@ -81,22 +69,8 @@ function InactiveSubView({
         color={percentageElapsed > 100 ? 'secondary' : 'primary'}
       />
       {buildTimerStats(timerSeconds, percentageElapsed, elapsedSeconds)}
-      <TransitionButtons
-        handleEndClick={() =>
-          end({
-            startTime,
-            endTime: new Date(),
-          })
-        }
-        handleNextClick={() =>
-          append({
-            startTime,
-            endTime: new Date(),
-          })
-        }
-      />
     </div>
   )
 }
 
-export default InactiveSubView
+export default RestView

@@ -1,17 +1,12 @@
 import './App.css'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState } from 'react'
 import { Container, getTextFieldUtilityClass, IconButton } from '@mui/material'
 import { ButtonGroup, Button, Box } from '@mui/material'
 import type { BoulderGrade } from './App'
-import type {
-  ClimbingSubSession,
-  InactiveSubSession,
-  ActiveSubSession,
-  GradeInfo,
-  ClimbingSession,
-} from './SessionManager'
+import type { RouteRecord, ClimbingSession } from './Utils'
 import ClimbSummaryChart from './ClimbSummaryChart'
 import SummaryStatistics from './SummaryStatistics'
+import { getRouteRecords } from './Utils'
 
 type SessionSummaryViewProps = {
   session: ClimbingSession
@@ -46,54 +41,27 @@ function SessionSummaryView({ session, maxGrade }: SessionSummaryViewProps) {
   let totalTime = session.endTime
     ? (session.endTime.getTime() - session.startTime.getTime()) / 1000
     : 0
-  let activeTime = session.subSessions.reduce((prev, next) => {
-    if ('gradeInfos' in next && next.endTime) {
+  let restTime = session.records.reduce((prev, next) => {
+    if (!('grade' in next) && next.endTime) {
       return prev + (next.endTime.getTime() - next.startTime.getTime()) / 1000
     }
     return prev
   }, 0)
-  let restTime = session.subSessions.reduce((prev, next) => {
-    if (!('gradeInfos' in next) && next.endTime) {
-      return prev + (next.endTime.getTime() - next.startTime.getTime()) / 1000
-    }
-    return prev
-  }, 0)
-  let combinedGradeInfo = session.subSessions.reduce<GradeInfo[]>(
-    (prev, next) => {
-      if ('gradeInfos' in next) {
-        // now we want to zip them togeth
-        for (let i = 0; i < next.gradeInfos.length; i++) {
-          if (!prev[i]) {
-            prev[i] = next.gradeInfos[i]
-          } else {
-            prev[i] = {
-              grade: prev[i].grade,
-              count: prev[i].count + next.gradeInfos[i].count,
-            }
-          }
-        }
-        return prev
-      }
-      return prev
-    },
-    []
-  )
+  let activeTime = totalTime - restTime
+  let routeRecords = getRouteRecords(session.records)
 
   return (
     <Container>
       {options}
       {displayType === summaryDisplayType.TotalClimbs && (
-        <ClimbSummaryChart
-          maxGrade={maxGrade}
-          subSessions={session.subSessions}
-        />
+        <ClimbSummaryChart maxGrade={maxGrade} records={session.records} />
       )}
       {displayType === summaryDisplayType.Statistics && (
         <SummaryStatistics
           totalTime={totalTime}
           activeTime={activeTime}
           restTime={restTime}
-          gradeInfo={combinedGradeInfo}
+          routeRecords={routeRecords}
         />
       )}
       {displayType === summaryDisplayType.VPointsOverTime && (

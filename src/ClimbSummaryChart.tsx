@@ -1,12 +1,7 @@
 import React from 'react'
 import type { BoulderGrade } from './App'
-import type {
-  ClimbingSubSession,
-  InactiveSubSession,
-  ActiveSubSession,
-  GradeInfo,
-  ClimbingSession,
-} from './SessionManager'
+import type { RouteRecord, ClimbingRecord } from './Utils'
+import { generateSessions, countRoutesAtGrade, getGradeLabel } from './Utils'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -38,15 +33,6 @@ export const options = {
   },
 }
 
-function getGradeLabel(grade: BoulderGrade): string {
-  switch (grade) {
-    case -1:
-      return 'VB'
-    default:
-      return `V${grade}`
-  }
-}
-
 function getLabels(maxGrade: BoulderGrade) {
   let labels = []
   for (let i = -1; i <= maxGrade; i++) {
@@ -57,7 +43,7 @@ function getLabels(maxGrade: BoulderGrade) {
 
 type ClimbSummaryChartProps = {
   maxGrade: BoulderGrade
-  subSessions: ClimbingSubSession[]
+  records: ClimbingRecord[]
 }
 
 type barChartData = {
@@ -66,39 +52,28 @@ type barChartData = {
   backgroundColor: string
 }
 
-function isBarChartData(item: barChartData | undefined): item is barChartData {
-  return !!item
-}
-function isActiveSession(
-  item: ActiveSubSession | undefined
-): item is ActiveSubSession {
-  return !!item
-}
 // for now assume ordered and all grades up to max
-function buildDataSets(subSessions: ClimbingSubSession[], step: number) {
-  let onlyActive = subSessions
-    .map((subSession) => {
-      if ('gradeInfos' in subSession) {
-        return subSession
-      }
-    })
-    .filter(isActiveSession)
-  let unfilteredDataSets = onlyActive.map((subSession, index) => {
-    let climbArray = subSession.gradeInfos.map((x) => x.count)
-    // so now we need to match through labels
+function buildDataSets(records: ClimbingRecord[], step: number) {
+  // chunk up into sessions
+  let bySession = generateSessions(records).map((session) =>
+    countRoutesAtGrade(session, 6)
+  )
+  let dataSets = bySession.map((sessionSummaries, index) => {
+    let climbArray = sessionSummaries.map((x) => x.count)
     return {
       label: `Set ${index + 1}`,
       data: climbArray,
       backgroundColor: `rgb(${step * index},${255 - step * index},${255})`,
     }
   })
-  return unfilteredDataSets
+  return dataSets
 }
-function ClimbSummaryChart({ maxGrade, subSessions }: ClimbSummaryChartProps) {
+
+function ClimbSummaryChart({ maxGrade, records }: ClimbSummaryChartProps) {
   const labels = getLabels(maxGrade)
   const data = {
     labels,
-    datasets: buildDataSets(subSessions, 25),
+    datasets: buildDataSets(records, 25),
   }
   return <Bar options={options} data={data} />
 }
